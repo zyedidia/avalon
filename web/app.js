@@ -11,21 +11,35 @@ var options = {
 		protocols_whitelist: ['websocket', 'xdr-streaming', 'xhr-streaming', 'iframe-eventsource', 'iframe-htmlfile', 'xdr-polling', 'xhr-polling', 'iframe-xhr-polling', 'jsonp-polling']
 };
 
+const rtLoyal = 0
+const rtMinion = 1
+const rtPercival = 2
+const rtMerlin = 3
+const rtOberon = 4
+const rtMordred = 5
+const rtAssassin = 6
+const rtMorgana = 7
+
 var roles = {};
-roles[0] = "Loyal servant"
-roles[1] = "Minion of Mordred"
-roles[2] = "Percival"
-roles[3] = "Merlin"
-roles[4] = "Oberon"
-roles[5] = "Mordred"
-roles[6] = "Assassin"
-roles[7] = "Morgana"
+roles[rtLoyal] = "Loyal servant of Arthur"
+roles[rtMinion] = "Minion of Mordred"
+roles[rtPercival] = "Percival"
+roles[rtMerlin] = "Merlin"
+roles[rtOberon] = "Oberon"
+roles[rtMordred] = "Mordred"
+roles[rtAssassin] = "Assassin"
+roles[rtMorgana] = "Morgana"
 
 var sock = new SockJS(origin+'/avalon', undefined, options);
 
-sock.onopen = function() {
-    var name = prompt("Please enter your name", "");
+function sendName(txt) {
+    var name = prompt(txt, "");
+    console.log("Sent " + name)
     sock.send(name)
+}
+
+sock.onopen = function() {
+    sendName("Please enter your name")
 };
 
 var clients = [];
@@ -57,6 +71,8 @@ sock.onmessage = function(e) {
     } else if (e.data.startsWith("ROLE:")) {
         var role = e.data.split(":")[1]; 
         document.getElementById('role').innerHTML = roles[parseInt(role)]
+    } else if (e.data.startsWith("INVALID")) {
+        sendName("Invalid name")
     }
 };
 
@@ -64,6 +80,16 @@ sock.onclose = function() {
 	document.getElementById("status").innerHTML = "connection closed";
 };
 
+function getRole(role) {
+    return document.getElementById(role.toString()).checked ? role : -1;
+}
+
 function go() {
-    sock.send("GO")
+    var merlin = getRole(rtMerlin);
+    var percival = getRole(rtPercival);
+    var mordred = getRole(rtMordred);
+    var morgana = getRole(rtMorgana);
+    var assassin = getRole(rtAssassin);
+    var oberon = getRole(rtOberon)
+    sock.send("GO:" + merlin + "," + percival + "," + mordred + "," + morgana + "," + assassin + "," + oberon);
 }

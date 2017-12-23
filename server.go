@@ -39,8 +39,28 @@ func SendMessageFrom(client Client, message string) {
 }
 
 func HandleConnection(conn sockjs.Session) {
-	name, _ := conn.Recv()
-	name = strings.TrimSpace(name)
+	invalidName := true
+	var name string
+	for invalidName {
+		invalidName = false
+		var err error
+		name, err = conn.Recv()
+		if err != nil {
+			// Client disconnected
+			return
+		}
+		name = strings.TrimSpace(name)
+
+		mutex.Lock()
+		for _, c := range clients {
+			if name == c.name {
+				conn.Send("INVALID\n")
+				invalidName = true
+				break
+			}
+		}
+		mutex.Unlock()
+	}
 
 	client := Client{
 		conn: conn,
@@ -70,9 +90,19 @@ func HandleConnection(conn sockjs.Session) {
 		}
 
 		msg := string(inMessage)
-		if strings.HasPrefix(msg, "GO") {
+		if strings.HasPrefix(msg, "GO:") {
 			nplayers := len(clients)
-			roles := AssignRoles(nplayers, []int{rtPercival, rtMorgana, rtMerlin})
+			special := strings.Split(msg, ":")[1]
+			specials := make([]int, 0, rtMorgana)
+			if strings.Contains(special, ",") {
+				for _, val := range strings.Split(special, ",") {
+					r, err := strconv.Atoi(val)
+					if err == nil && r != -1 {
+						specials = append(specials, r)
+					}
+				}
+			}
+			roles := AssignRoles(nplayers, specials)
 			mutex.Lock()
 			for i, c := range clients {
 				c.r = roles[i]
