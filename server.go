@@ -91,6 +91,7 @@ func HandleConnection(conn sockjs.Session) {
 
 		msg := string(inMessage)
 		if strings.HasPrefix(msg, "GO:") {
+			SendMessageFrom(client, msg)
 			nplayers := len(clients)
 			special := strings.Split(msg, ":")[1]
 			specials := make([]int, 0, rtMorgana)

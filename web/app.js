@@ -73,6 +73,19 @@ sock.onmessage = function(e) {
         document.getElementById('role').innerHTML = roles[parseInt(role)]
     } else if (e.data.startsWith("INVALID")) {
         sendName("Invalid name")
+    } else if (e.data.startsWith("GO:")) {
+        for (i = 2; i <= 7; i++) {
+            document.getElementById(i.toString()).checked = false;
+        }
+        if (e.data.indexOf(",") !== -1) {
+            var specials = e.data.split(":")[1].split(",")
+            for (i = 0; i < specials.length; i++) {
+                if (specials[i] !== "-1") {
+                    console.log(specials[i])
+                    document.getElementById(specials[i]).checked = true;
+                }
+            }
+        }
     }
 };
 
