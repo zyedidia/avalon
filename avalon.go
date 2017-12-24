@@ -25,6 +25,17 @@ const (
 	rtMorgana
 )
 
+var roleNames = map[int]string{
+	rtLoyal:    "Loyal servant of Arthur",
+	rtMinion:   "Minion of Mordred",
+	rtPercival: "Percival",
+	rtMerlin:   "Merlin",
+	rtOberon:   "Oberon",
+	rtMordred:  "Mordred",
+	rtAssassin: "Assassin",
+	rtMorgana:  "Morgana",
+}
+
 var (
 	infoLoyal    = []int{}
 	infoMinion   = []int{rtMinion, rtMordred, rtAssassin, rtMorgana}
@@ -58,12 +69,12 @@ func numBad(nplayers int) int {
 	return nplayers/2 - off
 }
 
-func getInfo(role int, roles []*Role) []int {
+func getInfo(index, role int, roles []*Role) []int {
 	result := make([]int, 0, len(roles))
 
 	for _, role := range info[role] {
 		for i, r := range roles {
-			if r.roleType == role {
+			if r.roleType == role && index != i {
 				result = append(result, i)
 			}
 		}
@@ -129,8 +140,8 @@ func AssignRoles(nplayers int, special []int) []*Role {
 		roles[i], roles[j] = roles[j], roles[i]
 	}
 
-	for _, r := range roles {
-		r.info = getInfo(r.roleType, roles)
+	for i, r := range roles {
+		r.info = getInfo(i, r.roleType, roles)
 	}
 
 	return roles
