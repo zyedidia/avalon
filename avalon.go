@@ -66,6 +66,9 @@ func numBad(nplayers int) int {
 	if nplayers%2 == 1 {
 		off = 0
 	}
+	if nplayers == 9 {
+		return 3
+	}
 	return nplayers/2 - off
 }
 
