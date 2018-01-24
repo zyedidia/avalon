@@ -30,7 +30,62 @@ roles[rtMordred] = "Mordred"
 roles[rtAssassin] = "Assassin"
 roles[rtMorgana] = "Morgana"
 
+var clients = [];
+
+var name = prompt("Please enter your name", "");
 var sock = new SockJS(origin+'/avalon', undefined, options);
+connect();
+
+function connect() {
+    sock.close()
+    clients = []
+    sock = new SockJS(origin+'/avalon', undefined, options);
+
+    sock.onopen = function() {
+        document.getElementById("status").innerHTML = "connected";
+        sock.send(name)
+    };
+
+    sock.onmessage = function(e) {
+        if (e.data.startsWith("CONNECT:")) {
+            clients.push(e.data.split(":")[1]);
+            displayClients();
+        } else if (e.data.startsWith("DISCONNECT:")) {
+            var index = clients.indexOf(e.data.split(":")[1]);
+            if (index > -1) {
+                clients.splice(index, 1);
+            }
+            displayClients();
+        } else if (e.data.startsWith("INFO:")) {
+            document.getElementById('info').innerHTML = e.data.split(":")[1]
+        } else if (e.data.startsWith("LEADER:")) {
+            document.getElementById('leader').innerHTML = "Leader: " + e.data.split(":")[1]
+        } else if (e.data.startsWith("ROLE:")) {
+            var role = e.data.split(":")[1]; 
+            document.getElementById('role').innerHTML = roles[parseInt(role)] + " (" + team(parseInt(role)) + ")"
+        } else if (e.data.startsWith("INVALID")) {
+            name = prompt("Please enter your name", "");
+            sock.send(name)
+        } else if (e.data.startsWith("GO:")) {
+            for (i = 2; i <= 7; i++) {
+                document.getElementById(i.toString()).checked = false;
+            }
+            if (e.data.indexOf(",") !== -1) {
+                var specials = e.data.split(":")[1].split(",")
+                for (i = 0; i < specials.length; i++) {
+                    if (specials[i] !== "-1") {
+                        console.log(specials[i])
+                        document.getElementById(specials[i]).checked = true;
+                    }
+                }
+            }
+        }
+    };
+
+    sock.onclose = function() {
+        document.getElementById("status").innerHTML = "disconnected";
+    };
+}
 
 function team(role) {
     if (role == 1 || role >= 4) {
@@ -39,22 +94,9 @@ function team(role) {
     return "Good team"
 }
 
-function sendName(txt) {
-    var name = prompt(txt, "");
-    console.log("Sent " + name)
-    sock.send(name)
-}
-
-sock.onopen = function() {
-    sendName("Please enter your name")
-};
-
-var clients = [];
-
 function displayClients() {
     var ul = document.getElementById("playerlist");
     ul.innerHTML = '';
-
 
     for (var i = 0; i < clients.length; i++) {
         var li = document.createElement("li");
@@ -62,45 +104,6 @@ function displayClients() {
         ul.appendChild(li);
     }
 }
-
-sock.onmessage = function(e) {
-    if (e.data.startsWith("CONNECT:")) {
-        clients.push(e.data.split(":")[1]);
-        displayClients();
-    } else if (e.data.startsWith("DISCONNECT:")) {
-        var index = clients.indexOf(e.data.split(":")[1]);
-        if (index > -1) {
-            clients.splice(index, 1);
-        }
-        displayClients();
-    } else if (e.data.startsWith("INFO:")) {
-        document.getElementById('info').innerHTML = e.data.split(":")[1]
-    } else if (e.data.startsWith("LEADER:")) {
-        document.getElementById('leader').innerHTML = "Leader: " + e.data.split(":")[1]
-    } else if (e.data.startsWith("ROLE:")) {
-        var role = e.data.split(":")[1]; 
-        document.getElementById('role').innerHTML = roles[parseInt(role)] + " (" + team(parseInt(role)) + ")"
-    } else if (e.data.startsWith("INVALID")) {
-        sendName("Invalid name")
-    } else if (e.data.startsWith("GO:")) {
-        for (i = 2; i <= 7; i++) {
-            document.getElementById(i.toString()).checked = false;
-        }
-        if (e.data.indexOf(",") !== -1) {
-            var specials = e.data.split(":")[1].split(",")
-            for (i = 0; i < specials.length; i++) {
-                if (specials[i] !== "-1") {
-                    console.log(specials[i])
-                    document.getElementById(specials[i]).checked = true;
-                }
-            }
-        }
-    }
-};
-
-sock.onclose = function() {
-	document.getElementById("status").innerHTML = "connection closed";
-};
 
 function getRole(role) {
     return document.getElementById(role.toString()).checked ? role : -1;
