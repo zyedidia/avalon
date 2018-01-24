@@ -9,21 +9,22 @@
 
     <body>
         <h1>Avalon</h1>
-        <br/>
         <h3>Connected Players</h3>
         <ul id="playerlist"></ul>
         <h3>Select characters</h3>
-        <input type="checkbox" id="3" value="Merlin">Merlin<br>
-        <input type="checkbox" id="2" value="Percival">Percival<br>
-        <input type="checkbox" id="5" value="Mordred">Mordred<br>
-        <input type="checkbox" id="7" value="Morgana">Morgana<br>
-        <input type="checkbox" id="6" value="Assassin">Assassin<br>
-        <input type="checkbox" id="4" value="Oberon">Oberon<br>
+        
+        <input type="checkbox" id="3" value="Merlin">Merlin - sees every bad player except Mordred<br>
+        <input type="checkbox" id="2" value="Percival">Percival - sees Merlin and Morgana<br>
+        <input type="checkbox" id="5" value="Mordred">Mordred - not seen by Merlin<br>
+        <input type="checkbox" id="7" value="Morgana">Morgana - seen by Percival<br>
+        <input type="checkbox" id="6" value="Assassin">Assassin - has last say when picking Merlin<br>
+        <input type="checkbox" id="4" value="Oberon">Oberon - not seen by his teammates<br>
         <button onclick="go()">Start new game</button> 
         <h3>Role</h3>
         <p id="role"></p>
         <h3>Info</h3>
         <p id="info"></p>
+        <p id="leader"></p>
         status: <span id="status">connection open</span>
     </body>
 </html>

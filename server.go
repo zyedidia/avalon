@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -97,6 +98,7 @@ func HandleConnection(conn sockjs.Session) {
 			log.Println("New game")
 			SendMessageFrom(client, msg)
 			nplayers := len(clients)
+			leader := rand.Intn(nplayers)
 			special := strings.Split(msg, ":")[1]
 			specials := make([]int, 0, rtMorgana)
 			if strings.Contains(special, ",") {
@@ -121,6 +123,7 @@ func HandleConnection(conn sockjs.Session) {
 					}
 				}
 				c.conn.Send("INFO:" + infoStr + "\n")
+				c.conn.Send("LEADER:" + clients[leader].name + "\n")
 			}
 			mutex.Unlock()
 		}

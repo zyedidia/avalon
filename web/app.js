@@ -32,6 +32,13 @@ roles[rtMorgana] = "Morgana"
 
 var sock = new SockJS(origin+'/avalon', undefined, options);
 
+function team(role) {
+    if (role == 1 || role >= 4) {
+        return "Bad team"
+    }
+    return "Good team"
+}
+
 function sendName(txt) {
     var name = prompt(txt, "");
     console.log("Sent " + name)
@@ -68,9 +75,11 @@ sock.onmessage = function(e) {
         displayClients();
     } else if (e.data.startsWith("INFO:")) {
         document.getElementById('info').innerHTML = e.data.split(":")[1]
+    } else if (e.data.startsWith("LEADER:")) {
+        document.getElementById('leader').innerHTML = "Leader: " + e.data.split(":")[1]
     } else if (e.data.startsWith("ROLE:")) {
         var role = e.data.split(":")[1]; 
-        document.getElementById('role').innerHTML = roles[parseInt(role)]
+        document.getElementById('role').innerHTML = roles[parseInt(role)] + " (" + team(parseInt(role)) + ")"
     } else if (e.data.startsWith("INVALID")) {
         sendName("Invalid name")
     } else if (e.data.startsWith("GO:")) {
