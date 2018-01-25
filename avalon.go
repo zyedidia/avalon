@@ -23,6 +23,8 @@ const (
 	rtMordred
 	rtAssassin
 	rtMorgana
+	rtOberdred
+	rtMercival
 )
 
 var roleNames = map[int]string{
@@ -34,6 +36,8 @@ var roleNames = map[int]string{
 	rtMordred:  "Mordred",
 	rtAssassin: "Assassin",
 	rtMorgana:  "Morgana",
+	rtOberdred: "Oberdred",
+	rtMercival: "Mercival",
 }
 
 var (
@@ -45,6 +49,8 @@ var (
 	infoMordred  = []int{rtMinion, rtAssassin, rtMorgana}
 	infoAssassin = []int{rtMinion, rtMordred, rtMorgana}
 	infoMorgana  = []int{rtMinion, rtMordred, rtAssassin}
+	infoOberdred = []int{rtMordred}
+	infoMercival = []int{rtAssassin}
 )
 
 var info map[int][]int
@@ -59,6 +65,8 @@ func init() {
 	info[rtMordred] = infoMordred
 	info[rtAssassin] = infoAssassin
 	info[rtMorgana] = infoMorgana
+	info[rtOberdred] = infoOberdred
+	info[rtMercival] = infoMercival
 }
 
 func numBad(nplayers int) int {
@@ -113,6 +121,9 @@ func AssignRoles(nplayers int, special []int) []*Role {
 		} else if !contains(done, rtMerlin) && contains(special, rtMerlin) {
 			done = append(done, rtMerlin)
 			r.roleType = rtMerlin
+		} else if !contains(done, rtMercival) && contains(special, rtMercival) {
+			done = append(done, rtMercival)
+			r.roleType = rtMercival
 		} else {
 			r.roleType = rtLoyal
 		}
@@ -129,6 +140,9 @@ func AssignRoles(nplayers int, special []int) []*Role {
 		} else if !contains(done, rtAssassin) && contains(special, rtAssassin) {
 			done = append(done, rtAssassin)
 			r.roleType = rtAssassin
+		} else if !contains(done, rtOberdred) && contains(special, rtOberdred) {
+			done = append(done, rtOberdred)
+			r.roleType = rtOberdred
 		} else if !contains(done, rtMorgana) && contains(special, rtMorgana) {
 			done = append(done, rtMorgana)
 			r.roleType = rtMorgana

@@ -19,6 +19,8 @@ const rtOberon = 4
 const rtMordred = 5
 const rtAssassin = 6
 const rtMorgana = 7
+const rtOberdred = 8
+const rtMercival = 9
 
 var roles = {};
 roles[rtLoyal] = "Loyal servant of Arthur"
@@ -29,6 +31,8 @@ roles[rtOberon] = "Oberon"
 roles[rtMordred] = "Mordred"
 roles[rtAssassin] = "Assassin"
 roles[rtMorgana] = "Morgana"
+roles[rtOberdred] = "Oberdred"
+roles[rtMercival] = "Mercival"
 
 var clients = [];
 
@@ -116,5 +120,7 @@ function go() {
     var morgana = getRole(rtMorgana);
     var assassin = getRole(rtAssassin);
     var oberon = getRole(rtOberon)
-    sock.send("GO:" + merlin + "," + percival + "," + mordred + "," + morgana + "," + assassin + "," + oberon);
+    var oberdred = getRole(rtOberdred);
+    var mercival = getRole(rtMercival)
+    sock.send("GO:" + merlin + "," + percival + "," + mordred + "," + morgana + "," + assassin + "," + oberon + "," + oberdred + "," + mercival);
 }
